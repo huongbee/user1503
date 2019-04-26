@@ -56,14 +56,23 @@ app.post('/signin',(req,res)=>{
             req.flash('error_msg', 'User not found!');
             return res.redirect('/signin')
         }
-        // compare pw
-
+        return compare(password, user.password)
+    })
+    .then(result=>{
+        if(!result){
+            req.flash('error_msg', 'Invalid password!');
+            return res.redirect('/signin')
+        }
+        return res.redirect('/');
     })
     .catch(err=>{
         req.flash('error_msg', err.message);
         res.redirect('/signin')
     })
 })
+app.get('/',(req,res)=>{
+    res.render('home');
+});
 
 app.listen(3000,()=>{
     console.log('Connect to port 3000');
