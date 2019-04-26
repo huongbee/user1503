@@ -30,7 +30,7 @@ app.post('/signup',(req,res)=>{
         res.redirect('/signup')
     }
     hash(password)
-    .then(passwordHash=>{
+    .then(passwordHash => {
         return UserModel.create({
             email, fullname, password: passwordHash
         })
@@ -47,6 +47,22 @@ app.post('/signup',(req,res)=>{
 });
 app.get('/signin',(req,res)=>{
     res.render('signin')
+})
+app.post('/signin',(req,res)=>{
+    const { email, password } = req.body;
+    UserModel.findOne({email})
+    .then(user=>{
+        if(!user){
+            req.flash('error_msg', 'User not found!');
+            return res.redirect('/signin')
+        }
+        // compare pw
+
+    })
+    .catch(err=>{
+        req.flash('error_msg', err.message);
+        res.redirect('/signin')
+    })
 })
 
 app.listen(3000,()=>{
