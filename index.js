@@ -63,6 +63,7 @@ app.post('/signin',(req,res)=>{
             req.flash('error_msg', 'Invalid password!');
             return res.redirect('/signin')
         }
+        // sign jwt
         return res.redirect('/');
     })
     .catch(err=>{
@@ -71,6 +72,7 @@ app.post('/signin',(req,res)=>{
     })
 })
 app.get('/',(req,res)=>{
+
     res.render('home');
 });
 
