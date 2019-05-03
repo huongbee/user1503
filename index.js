@@ -4,6 +4,7 @@ const parser = require('body-parser').urlencoded({extended:false})
 const {UserModel} = require('./models/User')
 const { hash, compare } = require('./lib/bcrypt');
 const { sign, verify} = require('./lib/jwt');
+const { checkLogin } = require('./lib/authenticate');
 const flash = require('connect-flash'); 
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
@@ -22,7 +23,6 @@ app.use(function (req, res, next) {
     res.locals.error_msg = req.flash('error_msg')
     next()
 })
-
 app.get('/signup',(req,res)=>{
     res.render('signup');
 })
@@ -83,16 +83,13 @@ app.post('/signin',(req,res)=>{
         res.redirect('/signin')
     })
 })
-app.get('/',(req,res)=>{
-    // const { token } = req.cookies
-    const token = req.cookies.token
-    if(!token){
-        req.flash('error_msg', 'Please login first!' );
-        return res.redirect('/signin')
-    }
-    console.log({token})
-    res.render('home');
+app.get('/',checkLogin,(req,res)=>{
+    // return UserModel.findById(userId)
+    return res.render('home', { fullname: 'Huong'});
 });
+app.get('/logout',checkLogin,(req,res)=>{
+    res.clearCookie('token').redirect('/signin');
+})
 
 app.listen(3000,()=>{
     console.log('Connect to port 3000');
