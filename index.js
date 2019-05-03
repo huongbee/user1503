@@ -69,8 +69,8 @@ app.post('/signin',(req,res)=>{
             sign({_id: user._id})
             .then(token=>{
                 // save token into cookie
-                // 1min
-                return res.cookie('token',token,{maxAge: 60000}).redirect('/');
+                // 1 min
+                return res.cookie('token',token,{maxAge: 600000}).redirect('/');
             })
             .catch(err=>{
                 req.flash('error_msg', 'Try again!' );
@@ -86,6 +86,10 @@ app.post('/signin',(req,res)=>{
 app.get('/',(req,res)=>{
     // const { token } = req.cookies
     const token = req.cookies.token
+    if(!token){
+        req.flash('error_msg', 'Please login first!' );
+        return res.redirect('/signin')
+    }
     console.log({token})
     res.render('home');
 });
