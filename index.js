@@ -6,8 +6,10 @@ const { hash, compare } = require('./lib/bcrypt');
 const { sign, verify} = require('./lib/jwt');
 const flash = require('connect-flash'); 
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const app = express()
 app.set('view engine','ejs')
+app.use(cookieParser())
 app.use(parser)
 app.use(session({
     secret: 'secret',
@@ -67,8 +69,8 @@ app.post('/signin',(req,res)=>{
             sign({_id: user._id})
             .then(token=>{
                 // save token into cookie
-                
-                return res.redirect('/');
+                // 1min
+                return res.cookie('token',token,{maxAge: 60000}).redirect('/');
             })
             .catch(err=>{
                 req.flash('error_msg', 'Try again!' );
@@ -82,7 +84,9 @@ app.post('/signin',(req,res)=>{
     })
 })
 app.get('/',(req,res)=>{
-
+    // const { token } = req.cookies
+    const token = req.cookies.token
+    console.log({token})
     res.render('home');
 });
 
